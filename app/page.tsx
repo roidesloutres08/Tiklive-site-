@@ -82,7 +82,7 @@ const plans = [
       "Automatisations de base",
       "1 overlay alerte cadeau",
       "TTS avec voix standard",
-      "Connexion TikTok",
+      "Liaison du compte TikTok",
     ],
     cta: "Commencer",
     featured: false,
@@ -128,7 +128,7 @@ export default function Home() {
           <div className="container hero-inner">
             <span className="badge">
               <span className="dot" />
-              Automatisation pour TikTok LIVE
+              Système d&apos;automatisation TikTok LIVE
             </span>
             <h1>
               Transformez vos LIVE TikTok en{" "}
@@ -146,10 +146,10 @@ export default function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Commencer gratuitement
+                Découvrir Tiklive
               </a>
               <a className="btn btn-ghost" href="#fonctionnalites">
-                Voir les fonctionnalités
+                Explorer les fonctions
               </a>
             </div>
 
@@ -169,40 +169,63 @@ export default function Home() {
             </div>
           </div>
 
-          {/* mock preview */}
+          {/* HUD console */}
           <div className="container">
-            <div className="hero-preview">
-              <div className="preview-bar">
-                <span />
-                <span />
-                <span />
+            <div className="hud">
+              <span className="hud-corner tl" />
+              <span className="hud-corner tr" />
+              <span className="hud-corner bl" />
+              <span className="hud-corner br" />
+
+              <div className="hud-bar">
+                <span className="hud-status">
+                  <span className="dot" />
+                  Système en ligne
+                </span>
+                <span className="hud-tag">● LIVE · TikTok</span>
+                <span>Latence 12 ms</span>
               </div>
-              <div className="preview-grid">
-                <div className="preview-screen">
-                  <span className="live-tag">● LIVE</span>
-                  <div className="gift-alert">
-                    <span className="emoji">🌹</span>
-                    <div className="txt">
-                      <strong>@julie a envoyé une Rose</strong>
-                      <span>Overlay + TTS déclenchés automatiquement</span>
-                    </div>
-                  </div>
+
+              <div className="hud-body">
+                <div className="reactor">
+                  <span className="sweep" />
+                  <span className="ring ring-1" />
+                  <span className="ring ring-2" />
+                  <span className="ring ring-3" />
+                  <span className="reactor-core" />
+                  <span className="reactor-cap">TIKLIVE&nbsp;OS</span>
                 </div>
-                <div className="preview-side">
-                  <div className="side-card">
-                    <div className="k">Objectif cadeaux</div>
-                    <div className="v">680 / 1000</div>
-                    <div className="bar">
-                      <i />
+
+                <div className="readouts">
+                  <div className="readout">
+                    <div className="r-top">
+                      <span className="r-k">Cadeaux traités</span>
+                      <span className="r-v">1&nbsp;204</span>
+                    </div>
+                    <span className="r-bar">
+                      <i style={{ width: "78%" }} />
+                    </span>
+                  </div>
+                  <div className="readout">
+                    <div className="r-top">
+                      <span className="r-k">Objectif cadeaux</span>
+                      <span className="r-v">68%</span>
+                    </div>
+                    <span className="r-bar">
+                      <i style={{ width: "68%" }} />
+                    </span>
+                  </div>
+                  <div className="readout">
+                    <div className="r-top">
+                      <span className="r-k">Mode actif</span>
+                      <span className="r-v cyan">VS Viewers</span>
                     </div>
                   </div>
-                  <div className="side-card">
-                    <div className="k">Mode actif</div>
-                    <div className="v">Streamer vs Viewers</div>
-                  </div>
-                  <div className="side-card">
-                    <div className="k">TTS</div>
-                    <div className="v">En lecture…</div>
+                  <div className="readout log">
+                    <span className="r-k">Flux d&apos;événements</span>
+                    <p>▸ @julie · Rose → overlay + TTS</p>
+                    <p>▸ @max · Follow → alerte sonore</p>
+                    <p className="muted">▸ TTS en lecture…</p>
                   </div>
                 </div>
               </div>
@@ -406,6 +429,9 @@ export default function Home() {
                   <a href="#fonctionnement">Comment ça marche</a>
                 </li>
                 <li>
+                  <a href="#tarifs">Tarifs</a>
+                </li>
+                <li>
                   <a href="#faq">FAQ</a>
                 </li>
                 <li>
@@ -414,30 +440,7 @@ export default function Home() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Application
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div className="footer-col">
-              <h4>Compte</h4>
-              <ul>
-                <li>
-                  <a
-                    href="https://tiklive.eu"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Connexion
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://tiklive.eu"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Créer un compte
+                    Accéder à l&apos;application
                   </a>
                 </li>
               </ul>

@@ -17,7 +17,7 @@ export default function Navbar() {
     <nav className="navbar">
       <div className="container nav-inner">
         <a href="#top" className="brand" onClick={() => setOpen(false)}>
-          <span className="brand-logo">▶</span>
+          <span className="brand-logo">◈</span>
           Tiklive
         </a>
 
@@ -33,20 +33,12 @@ export default function Navbar() {
 
         <div className="nav-cta">
           <a
-            className="btn btn-ghost"
-            href="https://tiklive.eu"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Connexion
-          </a>
-          <a
             className="btn btn-primary"
             href="https://tiklive.eu"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Démarrer
+            Accéder à Tiklive
           </a>
           <button
             className="nav-toggle"
