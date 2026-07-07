@@ -2,7 +2,9 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: ["claude/social-network-platform-rpfk1n"]
+    branches:
+      - "claude/app-showcase-site-G5HIK"
+      - "claude/social-network-platform-rpfk1n"
   workflow_dispatch:
 
 permissions:
