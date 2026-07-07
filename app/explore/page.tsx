@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { BadgeCheck, Camera, Heart, Play, Search, SearchX } from "lucide-react";
 import Avatar from "@/components/Avatar";
+import PostModal from "@/components/PostModal";
 import { TRENDING_HASHTAGS } from "@/lib/seed";
 import { formatCount, useApp } from "@/lib/store";
 
@@ -11,6 +12,7 @@ export default function ExplorePage() {
   const { posts, users, following, toggleFollow, me } = useApp();
   const [query, setQuery] = useState("");
   const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [openPost, setOpenPost] = useState<string | null>(null);
 
   const q = query.trim().toLowerCase();
 
@@ -113,10 +115,10 @@ export default function ExplorePage() {
       ) : (
         <div className="explore-grid">
           {filteredPosts.map((p) => (
-            <Link
+            <button
               key={p.id}
-              href={`/profile?u=${p.author}`}
               className="explore-card"
+              onClick={() => setOpenPost(p.id)}
             >
               <img
                 src={p.type === "video" ? (p.poster ?? p.src) : p.src}
@@ -141,9 +143,13 @@ export default function ExplorePage() {
                   {formatCount(p.likes)}
                 </span>
               </div>
-            </Link>
+            </button>
           ))}
         </div>
+      )}
+
+      {openPost && (
+        <PostModal postId={openPost} onClose={() => setOpenPost(null)} />
       )}
     </div>
   );

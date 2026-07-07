@@ -15,6 +15,7 @@ import {
   UserX,
 } from "lucide-react";
 import Avatar from "@/components/Avatar";
+import PostModal from "@/components/PostModal";
 import { GRADIENTS } from "@/lib/seed";
 import { formatCount, useApp } from "@/lib/store";
 
@@ -105,6 +106,7 @@ function ProfileContent() {
   const user = users.find((u) => u.handle === handle);
   const [tab, setTab] = useState<"posts" | "liked" | "saved">("posts");
   const [editing, setEditing] = useState(false);
+  const [openPost, setOpenPost] = useState<string | null>(null);
 
   if (!user) {
     return (
@@ -243,7 +245,11 @@ function ProfileContent() {
       ) : (
         <div className="explore-grid">
           {shownPosts.map((p) => (
-            <div key={p.id} className="explore-card">
+            <button
+              key={p.id}
+              className="explore-card"
+              onClick={() => setOpenPost(p.id)}
+            >
               <img
                 src={p.type === "video" ? (p.poster ?? p.src) : p.src}
                 alt={p.caption}
@@ -275,11 +281,14 @@ function ProfileContent() {
                   {formatCount(p.likes)}
                 </span>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       )}
 
+      {openPost && (
+        <PostModal postId={openPost} onClose={() => setOpenPost(null)} />
+      )}
       {editing && <EditProfileModal onClose={() => setEditing(false)} />}
     </div>
   );

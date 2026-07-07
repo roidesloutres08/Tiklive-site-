@@ -43,6 +43,7 @@ type AppState = {
   toggleFollow: (handle: string) => void;
   addComment: (postId: string, text: string) => void;
   addPost: (post: Omit<Post, "id" | "likes" | "shares" | "comments">) => void;
+  deletePost: (postId: string) => void;
   sendMessage: (withHandle: string, text: string) => void;
   markNotificationsRead: () => void;
   getUser: (handle: string) => User | undefined;
@@ -233,6 +234,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [],
   );
 
+  const deletePost = useCallback((postId: string) => {
+    setMyPosts((prev) => prev.filter((p) => p.id !== postId));
+    setMyComments((prev) => {
+      if (!(postId in prev)) return prev;
+      const next = { ...prev };
+      delete next[postId];
+      return next;
+    });
+    setLikedPosts((prev) => prev.filter((id) => id !== postId));
+    setSavedPosts((prev) => prev.filter((id) => id !== postId));
+  }, []);
+
   const sendMessage = useCallback((withHandle: string, text: string) => {
     const now = new Date();
     const time = `${now.getHours().toString().padStart(2, "0")}:${now
@@ -308,6 +321,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     toggleFollow,
     addComment,
     addPost,
+    deletePost,
     sendMessage,
     markNotificationsRead,
     getUser,
