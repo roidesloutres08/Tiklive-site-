@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { BadgeCheck, Camera, Heart, Play, Search, SearchX } from "lucide-react";
 import Avatar from "@/components/Avatar";
 import { TRENDING_HASHTAGS } from "@/lib/seed";
 import { formatCount, useApp } from "@/lib/store";
@@ -37,12 +38,15 @@ export default function ExplorePage() {
   return (
     <div className="page">
       <h1 className="page-title">Explorer</h1>
-      <input
-        className="search-bar"
-        placeholder="Rechercher des vidéos, comptes, hashtags…"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
+      <div className="search-wrap">
+        <Search size={18} className="search-icon" />
+        <input
+          className="search-bar"
+          placeholder="Rechercher des vidéos, comptes, hashtags…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+      </div>
       <div className="hashtag-row">
         {TRENDING_HASHTAGS.map(({ tag, views }) => (
           <button
@@ -70,7 +74,14 @@ export default function ExplorePage() {
                   <Link href={`/profile?u=${u.handle}`}>
                     <div className="user-row-name">
                       {u.name}{" "}
-                      {u.verified && <span className="verified">✔</span>}
+                      {u.verified && (
+                        <BadgeCheck
+                          size={15}
+                          className="verified"
+                          fill="var(--cyan)"
+                          stroke="var(--bg)"
+                        />
+                      )}
                     </div>
                     <div className="user-row-sub">
                       @{u.handle} · {formatCount(u.followers)} abonnés
@@ -94,24 +105,41 @@ export default function ExplorePage() {
       </h2>
       {filteredPosts.length === 0 ? (
         <div className="empty-state">
-          <span className="big">🔍</span>
+          <span className="empty-icon">
+            <SearchX size={40} />
+          </span>
           Aucun résultat pour cette recherche.
         </div>
       ) : (
         <div className="explore-grid">
           {filteredPosts.map((p) => (
-            <Link key={p.id} href={`/profile?u=${p.author}`} className="explore-card">
-              {p.type === "video" ? (
-                <img src={p.poster ?? p.src} alt={p.caption} loading="lazy" />
-              ) : (
-                <img src={p.src} alt={p.caption} loading="lazy" />
-              )}
+            <Link
+              key={p.id}
+              href={`/profile?u=${p.author}`}
+              className="explore-card"
+            >
+              <img
+                src={p.type === "video" ? (p.poster ?? p.src) : p.src}
+                alt={p.caption}
+                loading="lazy"
+              />
               <span className="type-badge">
-                {p.type === "video" ? "▶ Vidéo" : "📷 Photo"}
+                {p.type === "video" ? (
+                  <>
+                    <Play size={11} fill="currentColor" strokeWidth={0} /> Vidéo
+                  </>
+                ) : (
+                  <>
+                    <Camera size={11} /> Photo
+                  </>
+                )}
               </span>
               <div className="explore-card-overlay">
                 <span>@{p.author}</span>
-                <span>❤️ {formatCount(p.likes)}</span>
+                <span className="overlay-likes">
+                  <Heart size={12} fill="currentColor" strokeWidth={0} />
+                  {formatCount(p.likes)}
+                </span>
               </div>
             </Link>
           ))}

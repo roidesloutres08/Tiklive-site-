@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
+import { ArrowLeft, BadgeCheck, MessageCircle, SquarePen } from "lucide-react";
 import Avatar from "@/components/Avatar";
 import { useApp } from "@/lib/store";
 
@@ -37,13 +38,13 @@ function MessagesContent() {
     <div className="messages-layout">
       <div className={`conv-list${selected ? " hidden-mobile" : ""}`}>
         <div className="conv-list-header">
-          Messages{" "}
+          Messages
           <button
-            className="btn btn-outline"
-            style={{ float: "right", fontSize: 13, padding: "6px 12px" }}
+            className="btn btn-outline btn-icon-text"
             onClick={() => setShowNew((s) => !s)}
           >
-            ✏️ Nouveau
+            <SquarePen size={15} />
+            Nouveau
           </button>
         </div>
         {showNew &&
@@ -80,7 +81,14 @@ function MessagesContent() {
               <div className="conv-preview">
                 <div className="conv-name">
                   {u?.name ?? c.with}
-                  {u?.verified && <span className="verified"> ✔</span>}
+                  {u?.verified && (
+                    <BadgeCheck
+                      size={14}
+                      className="verified"
+                      fill="var(--cyan)"
+                      stroke="var(--bg)"
+                    />
+                  )}
                 </div>
                 <div className="conv-last">
                   {last
@@ -97,7 +105,7 @@ function MessagesContent() {
       <div className={`thread${!selected ? " hidden-mobile" : ""}`}>
         {!selected ? (
           <div className="thread-empty">
-            <span style={{ fontSize: 44 }}>💬</span>
+            <MessageCircle size={44} />
             <div>Sélectionne une conversation pour commencer à discuter</div>
           </div>
         ) : (
@@ -106,9 +114,9 @@ function MessagesContent() {
               <button
                 onClick={() => setSelected(null)}
                 aria-label="Retour"
-                style={{ fontSize: 20 }}
+                className="icon-btn"
               >
-                ←
+                <ArrowLeft size={20} />
               </button>
               <Avatar
                 name={partner?.name ?? selected}
@@ -126,8 +134,13 @@ function MessagesContent() {
             </div>
             <div className="thread-messages">
               {(conv?.messages ?? []).map((m) => (
-                <div key={m.id} style={{ display: "flex", flexDirection: "column" }}>
-                  <div className={`bubble ${m.from === "me" ? "mine" : "theirs"}`}>
+                <div
+                  key={m.id}
+                  style={{ display: "flex", flexDirection: "column" }}
+                >
+                  <div
+                    className={`bubble ${m.from === "me" ? "mine" : "theirs"}`}
+                  >
                     {m.text}
                   </div>
                   <span

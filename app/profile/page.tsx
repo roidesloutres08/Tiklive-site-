@@ -3,6 +3,17 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
+import {
+  BadgeCheck,
+  Camera,
+  Heart,
+  Inbox,
+  MessageCircle,
+  Pencil,
+  Play,
+  SquarePlus,
+  UserX,
+} from "lucide-react";
 import Avatar from "@/components/Avatar";
 import { GRADIENTS } from "@/lib/seed";
 import { formatCount, useApp } from "@/lib/store";
@@ -63,10 +74,18 @@ function EditProfileModal({ onClose }: { onClose: () => void }) {
           ))}
         </div>
         <div style={{ display: "flex", gap: 10, marginTop: 24 }}>
-          <button className="btn btn-outline" style={{ flex: 1 }} onClick={onClose}>
+          <button
+            className="btn btn-outline"
+            style={{ flex: 1 }}
+            onClick={onClose}
+          >
             Annuler
           </button>
-          <button className="btn btn-primary" style={{ flex: 1 }} onClick={save}>
+          <button
+            className="btn btn-primary"
+            style={{ flex: 1 }}
+            onClick={save}
+          >
             Enregistrer
           </button>
         </div>
@@ -78,15 +97,8 @@ function EditProfileModal({ onClose }: { onClose: () => void }) {
 function ProfileContent() {
   const params = useSearchParams();
   const router = useRouter();
-  const {
-    me,
-    users,
-    posts,
-    likedPosts,
-    savedPosts,
-    following,
-    toggleFollow,
-  } = useApp();
+  const { me, users, posts, likedPosts, savedPosts, following, toggleFollow } =
+    useApp();
 
   const handle = params.get("u") ?? me.handle;
   const isMe = handle === me.handle;
@@ -98,7 +110,9 @@ function ProfileContent() {
     return (
       <div className="page">
         <div className="empty-state">
-          <span className="big">🕵️</span>
+          <span className="empty-icon">
+            <UserX size={40} />
+          </span>
           Ce compte n&apos;existe pas.
           <br />
           <Link href="/explore" style={{ color: "var(--cyan)" }}>
@@ -113,10 +127,10 @@ function ProfileContent() {
   const liked = posts.filter((p) => likedPosts.includes(p.id));
   const saved = posts.filter((p) => savedPosts.includes(p.id));
   const isFollowing = following.includes(handle);
-  const followerCount =
-    user.followers + (isFollowing && !isMe ? 1 : 0);
+  const followerCount = user.followers + (isFollowing && !isMe ? 1 : 0);
 
-  const shownPosts = tab === "posts" ? userPosts : tab === "liked" ? liked : saved;
+  const shownPosts =
+    tab === "posts" ? userPosts : tab === "liked" ? liked : saved;
 
   return (
     <div className="page">
@@ -124,7 +138,15 @@ function ProfileContent() {
         <Avatar name={user.name} gradient={user.gradient} size={110} />
         <div className="profile-identity">
           <div className="profile-name">
-            {user.name} {user.verified && <span className="verified">✔</span>}
+            {user.name}{" "}
+            {user.verified && (
+              <BadgeCheck
+                size={20}
+                className="verified"
+                fill="var(--cyan)"
+                stroke="var(--bg)"
+              />
+            )}
           </div>
           <div className="profile-handle">@{user.handle}</div>
           <div className="profile-bio">{user.bio}</div>
@@ -139,9 +161,7 @@ function ProfileContent() {
             </div>
             <div className="stat">
               <div className="stat-value">
-                {formatCount(
-                  userPosts.reduce((sum, p) => sum + p.likes, 0),
-                )}
+                {formatCount(userPosts.reduce((sum, p) => sum + p.likes, 0))}
               </div>
               <div className="stat-label">J&apos;aime</div>
             </div>
@@ -150,12 +170,14 @@ function ProfileContent() {
             {isMe ? (
               <>
                 <button
-                  className="btn btn-outline"
+                  className="btn btn-outline btn-icon-text"
                   onClick={() => setEditing(true)}
                 >
+                  <Pencil size={15} />
                   Modifier le profil
                 </button>
-                <Link href="/upload" className="btn btn-primary">
+                <Link href="/upload" className="btn btn-primary btn-icon-text">
+                  <SquarePlus size={15} />
                   Publier
                 </Link>
               </>
@@ -168,9 +190,10 @@ function ProfileContent() {
                   {isFollowing ? "Abonné(e) ✓" : "S'abonner"}
                 </button>
                 <button
-                  className="btn btn-outline"
+                  className="btn btn-outline btn-icon-text"
                   onClick={() => router.push(`/messages?u=${handle}`)}
                 >
+                  <MessageCircle size={15} />
                   Message
                 </button>
               </>
@@ -206,7 +229,9 @@ function ProfileContent() {
 
       {shownPosts.length === 0 ? (
         <div className="empty-state">
-          <span className="big">📭</span>
+          <span className="empty-icon">
+            {tab === "liked" ? <Heart size={40} /> : <Inbox size={40} />}
+          </span>
           {tab === "posts"
             ? isMe
               ? "Tu n'as encore rien publié. Lance-toi !"
@@ -219,9 +244,21 @@ function ProfileContent() {
         <div className="explore-grid">
           {shownPosts.map((p) => (
             <div key={p.id} className="explore-card">
-              <img src={p.type === "video" ? (p.poster ?? p.src) : p.src} alt={p.caption} loading="lazy" />
+              <img
+                src={p.type === "video" ? (p.poster ?? p.src) : p.src}
+                alt={p.caption}
+                loading="lazy"
+              />
               <span className="type-badge">
-                {p.type === "video" ? "▶ Vidéo" : "📷 Photo"}
+                {p.type === "video" ? (
+                  <>
+                    <Play size={11} fill="currentColor" strokeWidth={0} /> Vidéo
+                  </>
+                ) : (
+                  <>
+                    <Camera size={11} /> Photo
+                  </>
+                )}
               </span>
               <div className="explore-card-overlay">
                 <span
@@ -233,7 +270,10 @@ function ProfileContent() {
                 >
                   {p.caption}
                 </span>
-                <span>❤️ {formatCount(p.likes)}</span>
+                <span className="overlay-likes">
+                  <Heart size={12} fill="currentColor" strokeWidth={0} />
+                  {formatCount(p.likes)}
+                </span>
               </div>
             </div>
           ))}

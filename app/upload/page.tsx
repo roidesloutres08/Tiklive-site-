@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
+import { Camera, Clapperboard, ImagePlus, Music } from "lucide-react";
 import { useApp } from "@/lib/store";
 
 export default function UploadPage() {
@@ -61,7 +62,7 @@ export default function UploadPage() {
 
   return (
     <div className="page">
-      <h1 className="page-title">➕ Publier</h1>
+      <h1 className="page-title">Publier</h1>
       <div className="upload-card">
         <label className="field-label" style={{ marginTop: 0 }}>
           Type de contenu
@@ -71,13 +72,15 @@ export default function UploadPage() {
             className={type === "photo" ? "active" : ""}
             onClick={() => setType("photo")}
           >
-            📷 Photo
+            <Camera size={17} />
+            Photo
           </button>
           <button
             className={type === "video" ? "active" : ""}
             onClick={() => setType("video")}
           >
-            🎬 Vidéo
+            <Clapperboard size={17} />
+            Vidéo
           </button>
         </div>
 
@@ -85,7 +88,7 @@ export default function UploadPage() {
           <>
             <label className="field-label">Ta photo</label>
             <div className="dropzone" onClick={() => fileRef.current?.click()}>
-              <span style={{ fontSize: 32 }}>🖼️</span>
+              <ImagePlus size={34} style={{ marginBottom: 8 }} />
               <br />
               Clique pour choisir une image
               <br />
@@ -118,7 +121,10 @@ export default function UploadPage() {
                 <video src={videoUrl.trim()} controls muted />
               </div>
             )}
-            <label className="field-label">Musique (facultatif)</label>
+            <label className="field-label">
+              <Music size={13} style={{ verticalAlign: "-2px", marginRight: 5 }} />
+              Musique (facultatif)
+            </label>
             <input
               className="field-input"
               placeholder="ex. Son original — mon.compte"

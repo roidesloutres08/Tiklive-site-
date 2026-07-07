@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { Heart, MessageCircle, X } from "lucide-react";
 import { formatCount, useApp } from "@/lib/store";
 import type { Post } from "@/lib/types";
 import Avatar from "./Avatar";
@@ -29,14 +30,16 @@ export default function CommentsDrawer({
       <div className="comments-drawer" role="dialog" aria-label="Commentaires">
         <div className="drawer-header">
           <span>Commentaires ({post.comments.length})</span>
-          <button onClick={onClose} aria-label="Fermer" style={{ fontSize: 20 }}>
-            ✕
+          <button onClick={onClose} aria-label="Fermer" className="icon-btn">
+            <X size={20} />
           </button>
         </div>
         <div className="drawer-body">
           {post.comments.length === 0 && (
             <div className="empty-state">
-              <span className="big">💬</span>
+              <span className="empty-icon">
+                <MessageCircle size={40} />
+              </span>
               Aucun commentaire pour l&apos;instant.
               <br />
               Sois la première personne à commenter !
@@ -62,7 +65,10 @@ export default function CommentsDrawer({
                   <div className="comment-text">{c.text}</div>
                   <div className="comment-meta">
                     <span>{c.time}</span>
-                    <span>❤️ {formatCount(c.likes)}</span>
+                    <span className="comment-like">
+                      <Heart size={13} />
+                      {formatCount(c.likes)}
+                    </span>
                     <span>Répondre</span>
                   </div>
                 </div>

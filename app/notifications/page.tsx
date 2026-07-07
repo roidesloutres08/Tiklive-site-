@@ -2,15 +2,23 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
+import {
+  AtSign,
+  Heart,
+  MessageCircle,
+  Radio,
+  UserPlus,
+  type LucideIcon,
+} from "lucide-react";
 import Avatar from "@/components/Avatar";
 import { useApp } from "@/lib/store";
 
-const KIND_ICONS: Record<string, string> = {
-  like: "❤️",
-  follow: "👤",
-  comment: "💬",
-  live: "📡",
-  mention: "@",
+const KIND_STYLE: Record<string, { icon: LucideIcon; color: string }> = {
+  like: { icon: Heart, color: "#fe2c55" },
+  follow: { icon: UserPlus, color: "#25f4ee" },
+  comment: { icon: MessageCircle, color: "#a78bfa" },
+  live: { icon: Radio, color: "#ff6a00" },
+  mention: { icon: AtSign, color: "#ffc94d" },
 };
 
 export default function NotificationsPage() {
@@ -24,12 +32,16 @@ export default function NotificationsPage() {
 
   return (
     <div className="page" style={{ maxWidth: 680 }}>
-      <h1 className="page-title">🔔 Notifications</h1>
+      <h1 className="page-title">Notifications</h1>
       {notifications.map((n) => {
         const user = getUser(n.from);
+        const style = KIND_STYLE[n.kind] ?? KIND_STYLE.like;
+        const Icon = style.icon;
         return (
           <div key={n.id} className="notif-item">
-            <span className="notif-icon">{KIND_ICONS[n.kind] ?? "🔔"}</span>
+            <span className="notif-icon" style={{ color: style.color }}>
+              <Icon size={17} />
+            </span>
             <Link href={`/profile?u=${n.from}`}>
               <Avatar
                 name={user?.name ?? n.from}

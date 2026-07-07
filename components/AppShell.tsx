@@ -3,19 +3,43 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
+import {
+  Bell,
+  Compass,
+  Home,
+  MessageCircle,
+  Play,
+  Radio,
+  SquarePlus,
+  User,
+} from "lucide-react";
 import { GRADIENTS } from "@/lib/seed";
 import { useApp } from "@/lib/store";
 import Avatar from "./Avatar";
 
 const NAV = [
-  { href: "/", icon: "🏠", label: "Pour toi" },
-  { href: "/explore", icon: "🧭", label: "Explorer" },
-  { href: "/live", icon: "📡", label: "Live" },
-  { href: "/messages", icon: "✉️", label: "Messages" },
-  { href: "/notifications", icon: "🔔", label: "Notifications" },
-  { href: "/upload", icon: "➕", label: "Publier" },
-  { href: "/profile", icon: "👤", label: "Profil" },
+  { href: "/", icon: Home, label: "Pour toi" },
+  { href: "/explore", icon: Compass, label: "Explorer" },
+  { href: "/live", icon: Radio, label: "Live" },
+  { href: "/messages", icon: MessageCircle, label: "Messages" },
+  { href: "/notifications", icon: Bell, label: "Notifications" },
+  { href: "/upload", icon: SquarePlus, label: "Publier" },
+  { href: "/profile", icon: User, label: "Profil" },
 ];
+
+function Logo() {
+  return (
+    <Link href="/" className="logo">
+      <span className="logo-mark">
+        <Play size={16} strokeWidth={0} fill="#fff" />
+      </span>
+      <span>
+        <span className="logo-tik">Tik</span>
+        <span className="logo-live">Live</span>
+      </span>
+    </Link>
+  );
+}
 
 function Onboarding() {
   const { completeOnboarding } = useApp();
@@ -42,7 +66,7 @@ function Onboarding() {
       <div className="onboarding-card">
         <div className="onboarding-title">
           Bienvenue sur <span className="logo-tik">Tik</span>
-          <span className="logo-live">Live</span> 👋
+          <span className="logo-live">Live</span>
         </div>
         <p className="onboarding-sub">
           Crée ton profil pour aimer, commenter, suivre des créateurs et
@@ -99,32 +123,32 @@ export default function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <Link href="/" className="logo">
-          <span className="logo-tik">Tik</span>
-          <span className="logo-live">Live</span>
+        <Logo />
+        {NAV.map((item) => {
+          const Icon = item.icon;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`nav-item${isActive(item.href) ? " active" : ""}`}
+            >
+              <span className="nav-icon">
+                <Icon size={22} strokeWidth={isActive(item.href) ? 2.4 : 2} />
+              </span>
+              {item.label}
+              {item.href === "/notifications" && unread > 0 && (
+                <span className="nav-badge">{unread}</span>
+              )}
+            </Link>
+          );
+        })}
+        <Link href="/profile" className="sidebar-me">
+          <Avatar name={me.name} gradient={me.gradient} size={36} />
+          <span style={{ minWidth: 0 }}>
+            <span className="sidebar-me-name">{me.name}</span>
+            <span className="sidebar-me-handle">@{me.handle}</span>
+          </span>
         </Link>
-        {NAV.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`nav-item${isActive(item.href) ? " active" : ""}`}
-          >
-            <span className="nav-icon">{item.icon}</span>
-            {item.label}
-            {item.href === "/notifications" && unread > 0 && (
-              <span className="nav-badge">{unread}</span>
-            )}
-          </Link>
-        ))}
-        <div style={{ padding: "16px 12px", display: "flex", alignItems: "center", gap: 10 }}>
-          <Avatar name={me.name} gradient={me.gradient} size={34} />
-          <div style={{ minWidth: 0 }}>
-            <div style={{ fontWeight: 700, fontSize: 14 }}>{me.name}</div>
-            <div style={{ color: "var(--text-muted)", fontSize: 12 }}>
-              @{me.handle}
-            </div>
-          </div>
-        </div>
         <div className="sidebar-footer">
           TikLive — réseau social de démonstration.
           <br />© 2026 TikLive
@@ -135,19 +159,36 @@ export default function AppShell({ children }: { children: ReactNode }) {
 
       <nav className="bottom-nav">
         <Link href="/" className={isActive("/") ? "active" : ""}>
-          <span className="nav-icon">🏠</span>Accueil
+          <span className="nav-icon">
+            <Home size={23} />
+          </span>
+          Accueil
         </Link>
         <Link href="/explore" className={isActive("/explore") ? "active" : ""}>
-          <span className="nav-icon">🧭</span>Explorer
+          <span className="nav-icon">
+            <Compass size={23} />
+          </span>
+          Explorer
         </Link>
-        <Link href="/upload">
-          <span className="create-btn">＋</span>
+        <Link href="/upload" aria-label="Publier">
+          <span className="create-btn">
+            <SquarePlus size={20} />
+          </span>
         </Link>
-        <Link href="/messages" className={isActive("/messages") ? "active" : ""}>
-          <span className="nav-icon">✉️</span>Messages
+        <Link
+          href="/messages"
+          className={isActive("/messages") ? "active" : ""}
+        >
+          <span className="nav-icon">
+            <MessageCircle size={23} />
+          </span>
+          Messages
         </Link>
         <Link href="/profile" className={isActive("/profile") ? "active" : ""}>
-          <span className="nav-icon">👤</span>Profil
+          <span className="nav-icon">
+            <User size={23} />
+          </span>
+          Profil
         </Link>
       </nav>
 

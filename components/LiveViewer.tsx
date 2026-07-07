@@ -2,6 +2,16 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import {
+  Crown,
+  Eye,
+  Flame,
+  Gem,
+  Gift,
+  Heart,
+  Rocket,
+  X,
+} from "lucide-react";
 import { GRADIENTS, LIVE_CHAT_POOL } from "@/lib/seed";
 import { formatCount, useApp } from "@/lib/store";
 import type { LiveStream } from "@/lib/types";
@@ -11,10 +21,18 @@ type ChatEntry = {
   id: number;
   author: string;
   text: string;
-  gift?: boolean;
+  gift?: string;
 };
 
-const GIFTS = ["🌹", "🎁", "💎", "🦁", "🚀"];
+const GIFTS = [
+  { name: "Cadeau", icon: Gift, color: "#ff5c7a" },
+  { name: "Diamant", icon: Gem, color: "#4facfe" },
+  { name: "Couronne", icon: Crown, color: "#ffc94d" },
+  { name: "Fusée", icon: Rocket, color: "#38ef7d" },
+  { name: "Flamme", icon: Flame, color: "#ff6a00" },
+];
+
+const HEART_COLORS = ["#fe2c55", "#ff6a00", "#ffc94d", "#a78bfa", "#4facfe"];
 
 export default function LiveViewer({
   stream,
@@ -67,14 +85,14 @@ export default function LiveViewer({
     setInput("");
   };
 
-  const sendGift = (gift: string) => {
+  const sendGift = (giftName: string) => {
     setChat((prev) => [
       ...prev.slice(-60),
       {
         id: nextId.current++,
         author: me.handle,
-        text: `a envoyé un cadeau ${gift}`,
-        gift: true,
+        text: `a envoyé : ${giftName}`,
+        gift: giftName,
       },
     ]);
     setHearts((prev) => [...prev.slice(-12), nextId.current++]);
@@ -101,8 +119,9 @@ export default function LiveViewer({
           </Link>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontWeight: 800, fontSize: 15 }}>@{stream.host}</div>
-            <div style={{ fontSize: 12, color: "#eee" }}>
-              👁 {formatCount(viewers)} spectateurs
+            <div className="live-topbar-viewers">
+              <Eye size={14} />
+              {formatCount(viewers)} spectateurs
             </div>
           </div>
           <button
@@ -120,19 +139,14 @@ export default function LiveViewer({
               onClose();
             }}
             aria-label="Quitter le live"
-            style={{ fontSize: 22, marginLeft: 6 }}
+            className="icon-btn icon-btn-dark"
           >
-            ✕
+            <X size={20} />
           </button>
         </div>
 
         <div className="live-stage-inner">
-          <span
-            className="live-badge"
-            style={{ position: "static", fontSize: 13 }}
-          >
-            ● EN DIRECT
-          </span>
+          <span className="live-badge live-badge-static">EN DIRECT</span>
           <h2 style={{ margin: "16px 0 4px", fontSize: 24 }}>{stream.title}</h2>
           <div style={{ opacity: 0.85, fontWeight: 600 }}>
             {stream.category}
@@ -144,8 +158,9 @@ export default function LiveViewer({
             <span />
             <span />
           </div>
-          <div style={{ marginTop: 18, fontSize: 13, opacity: 0.8 }}>
-            Touche l&apos;écran pour envoyer un ❤️
+          <div className="live-hint">
+            <Heart size={14} fill="currentColor" />
+            Touche l&apos;écran pour envoyer des cœurs
           </div>
         </div>
 
@@ -154,9 +169,12 @@ export default function LiveViewer({
             <span
               key={id}
               className="floating-heart"
-              style={{ right: (id * 13) % 40 }}
+              style={{
+                right: (id * 13) % 40,
+                color: HEART_COLORS[id % HEART_COLORS.length],
+              }}
             >
-              {["❤️", "🧡", "💛", "💜", "💙"][id % 5]}
+              <Heart size={26} fill="currentColor" strokeWidth={0} />
             </span>
           ))}
         </div>
@@ -165,22 +183,42 @@ export default function LiveViewer({
       <div className="live-chat">
         <div className="drawer-header">Chat en direct</div>
         <div className="live-chat-messages" ref={chatRef}>
-          {chat.map((c) => (
-            <div key={c.id} className={`chat-msg${c.gift ? " chat-gift" : ""}`}>
-              <span className="chat-author">@{c.author}</span>
-              {c.text}
-            </div>
-          ))}
+          {chat.map((c) => {
+            const gift = c.gift
+              ? GIFTS.find((g) => g.name === c.gift)
+              : undefined;
+            return (
+              <div
+                key={c.id}
+                className={`chat-msg${gift ? " chat-gift" : ""}`}
+              >
+                <span className="chat-author">@{c.author}</span>
+                {c.text}
+                {gift && (
+                  <gift.icon
+                    size={15}
+                    style={{
+                      color: gift.color,
+                      verticalAlign: "-2px",
+                      marginLeft: 5,
+                    }}
+                  />
+                )}
+              </div>
+            );
+          })}
         </div>
         <div className="gift-row">
           {GIFTS.map((g) => (
             <button
-              key={g}
+              key={g.name}
               className="gift-btn"
-              onClick={() => sendGift(g)}
-              aria-label={`Envoyer ${g}`}
+              onClick={() => sendGift(g.name)}
+              aria-label={`Envoyer ${g.name}`}
+              title={g.name}
+              style={{ color: g.color }}
             >
-              {g}
+              <g.icon size={20} />
             </button>
           ))}
         </div>

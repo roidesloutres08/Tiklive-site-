@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { BadgeCheck, Eye } from "lucide-react";
 import Avatar from "@/components/Avatar";
 import LiveViewer from "@/components/LiveViewer";
 import { GRADIENTS, SEED_LIVES } from "@/lib/seed";
@@ -14,7 +15,7 @@ export default function LivePage() {
 
   return (
     <div className="page">
-      <h1 className="page-title">📡 En direct maintenant</h1>
+      <h1 className="page-title">En direct maintenant</h1>
       <div className="live-grid">
         {SEED_LIVES.map((live) => {
           const host = getUser(live.host);
@@ -32,7 +33,8 @@ export default function LivePage() {
               >
                 <span className="live-badge">EN DIRECT</span>
                 <span className="live-viewers">
-                  👁 {formatCount(live.viewers)}
+                  <Eye size={13} />
+                  {formatCount(live.viewers)}
                 </span>
                 <Avatar
                   name={host?.name ?? live.host}
@@ -45,7 +47,14 @@ export default function LivePage() {
                   <div className="live-title">{live.title}</div>
                   <div className="live-host">
                     @{live.host}
-                    {host?.verified && <span className="verified"> ✔</span>}
+                    {host?.verified && (
+                      <BadgeCheck
+                        size={14}
+                        className="verified"
+                        fill="var(--cyan)"
+                        stroke="var(--bg-elevated)"
+                      />
+                    )}
                   </div>
                   <span className="live-category">{live.category}</span>
                 </div>
