@@ -8,6 +8,7 @@ import {
   Camera,
   Heart,
   Inbox,
+  LogOut,
   MessageCircle,
   Pencil,
   Play,
@@ -20,7 +21,7 @@ import { GRADIENTS } from "@/lib/seed";
 import { formatCount, useApp } from "@/lib/store";
 
 function EditProfileModal({ onClose }: { onClose: () => void }) {
-  const { me, updateProfile } = useApp();
+  const { me, updateProfile, mode } = useApp();
   const [name, setName] = useState(me.name);
   const [handle, setHandle] = useState(me.handle);
   const [bio, setBio] = useState(me.bio);
@@ -54,7 +55,15 @@ function EditProfileModal({ onClose }: { onClose: () => void }) {
           value={handle}
           onChange={(e) => setHandle(e.target.value)}
           maxLength={24}
+          disabled={mode === "cloud"}
+          style={mode === "cloud" ? { opacity: 0.55 } : undefined}
         />
+        {mode === "cloud" && (
+          <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 6 }}>
+            Le nom d&apos;utilisateur ne peut pas être modifié : tes abonnés et
+            messages y sont rattachés.
+          </p>
+        )}
         <label className="field-label">Bio</label>
         <textarea
           className="field-textarea"
@@ -98,8 +107,17 @@ function EditProfileModal({ onClose }: { onClose: () => void }) {
 function ProfileContent() {
   const params = useSearchParams();
   const router = useRouter();
-  const { me, users, posts, likedPosts, savedPosts, following, toggleFollow } =
-    useApp();
+  const {
+    me,
+    users,
+    posts,
+    likedPosts,
+    savedPosts,
+    following,
+    toggleFollow,
+    mode,
+    signOut,
+  } = useApp();
 
   const handle = params.get("u") ?? me.handle;
   const isMe = handle === me.handle;
@@ -182,6 +200,15 @@ function ProfileContent() {
                   <SquarePlus size={15} />
                   Publier
                 </Link>
+                {mode === "cloud" && (
+                  <button
+                    className="btn btn-outline btn-icon-text"
+                    onClick={() => void signOut()}
+                  >
+                    <LogOut size={15} />
+                    Se déconnecter
+                  </button>
+                )}
               </>
             ) : (
               <>

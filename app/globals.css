@@ -1347,6 +1347,24 @@ textarea {
   line-height: 1.5;
 }
 
+.auth-switch {
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-top: 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--cyan);
+}
+.auth-switch:hover {
+  text-decoration: underline;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 .gradient-picker {
   display: flex;
   gap: 10px;

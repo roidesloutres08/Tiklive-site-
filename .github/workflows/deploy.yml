@@ -41,11 +41,47 @@ jobs:
         run: npm run build
         env:
           GITHUB_PAGES: "true"
+          # Variable de dépôt (Settings > Secrets and variables > Actions >
+          # Variables) : quand PAGES_CUSTOM_DOMAIN vaut "tiklive.eu", le site
+          # est construit pour être servi sur tiklive.eu/reseau.
+          PAGES_CUSTOM_DOMAIN: ${{ vars.PAGES_CUSTOM_DOMAIN }}
+          # Secrets du dépôt : connexion à la base Supabase (comptes réels).
+          # Sans eux, le site fonctionne en mode démo (stockage local).
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+      - name: Prepare site directory
+        env:
+          PAGES_CUSTOM_DOMAIN: ${{ vars.PAGES_CUSTOM_DOMAIN }}
+        run: |
+          if [ -n "$PAGES_CUSTOM_DOMAIN" ]; then
+            # Domaine personnalisé : l'app vit sous /reseau, la racine redirige.
+            mkdir -p site/reseau
+            cp -r out/. site/reseau/
+            echo "$PAGES_CUSTOM_DOMAIN" > site/CNAME
+            cp out/404.html site/404.html
+            cat > site/index.html <<'EOF'
+          <!DOCTYPE html>
+          <html lang="fr">
+            <head>
+              <meta charset="utf-8" />
+              <meta http-equiv="refresh" content="0; url=/reseau/" />
+              <title>TikLive</title>
+            </head>
+            <body>
+              <p><a href="/reseau/">Accéder à TikLive</a></p>
+            </body>
+          </html>
+          EOF
+          else
+            mkdir -p site
+            cp -r out/. site/
+          fi
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: out
+          path: site
 
   deploy:
     needs: build

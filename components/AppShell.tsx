@@ -112,9 +112,159 @@ function Onboarding() {
   );
 }
 
+function AuthModal() {
+  const { signIn, signUp } = useApp();
+  const [view, setView] = useState<"signup" | "login">("signup");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [handle, setHandle] = useState("");
+  const [gradient, setGradient] = useState(4);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  const submit = async () => {
+    setError(null);
+    setNotice(null);
+    const cleanEmail = email.trim().toLowerCase();
+    if (!cleanEmail || !password) {
+      setError("Renseigne ton email et un mot de passe.");
+      return;
+    }
+    setBusy(true);
+    if (view === "login") {
+      const err = await signIn(cleanEmail, password);
+      if (err) setError(err);
+    } else {
+      const cleanName = name.trim() || "Mon compte";
+      const cleanHandle =
+        handle.trim().toLowerCase().replace(/[^a-z0-9._]/g, "") ||
+        cleanName.toLowerCase().replace(/[^a-z0-9]/g, ".") ||
+        "moi";
+      const res = await signUp(cleanEmail, password, {
+        name: cleanName,
+        handle: cleanHandle,
+        gradient,
+      });
+      if (res.error) setError(res.error);
+      else if (res.needsConfirmation)
+        setNotice(
+          "Compte créé ! Vérifie ta boîte mail pour confirmer ton adresse, puis connecte-toi.",
+        );
+    }
+    setBusy(false);
+  };
+
+  return (
+    <div className="onboarding-backdrop">
+      <div className="onboarding-card">
+        <div className="onboarding-title">
+          Bienvenue sur <span className="logo-tik">Tik</span>
+          <span className="logo-live">Live</span>
+        </div>
+        <p className="onboarding-sub">
+          {view === "signup"
+            ? "Crée ton compte pour publier, aimer, commenter et discuter avec les autres membres."
+            : "Connecte-toi pour retrouver ton compte."}
+        </p>
+        {view === "signup" && (
+          <>
+            <label className="field-label">Ton nom</label>
+            <input
+              className="field-input"
+              placeholder="ex. Camille Durand"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              maxLength={40}
+            />
+            <label className="field-label">Nom d&apos;utilisateur</label>
+            <input
+              className="field-input"
+              placeholder="ex. camille.d"
+              value={handle}
+              onChange={(e) => setHandle(e.target.value)}
+              maxLength={24}
+            />
+          </>
+        )}
+        <label className="field-label">Email</label>
+        <input
+          className="field-input"
+          type="email"
+          placeholder="toi@exemple.fr"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          autoComplete="email"
+        />
+        <label className="field-label">Mot de passe</label>
+        <input
+          className="field-input"
+          type="password"
+          placeholder="6 caractères minimum"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && !busy && submit()}
+          autoComplete={view === "signup" ? "new-password" : "current-password"}
+        />
+        {view === "signup" && (
+          <>
+            <label className="field-label">Couleur d&apos;avatar</label>
+            <div className="gradient-picker">
+              {GRADIENTS.map((g, i) => (
+                <button
+                  key={i}
+                  className={`gradient-swatch${i === gradient ? " active" : ""}`}
+                  style={{ background: g }}
+                  onClick={() => setGradient(i)}
+                  aria-label={`Couleur ${i + 1}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+        {error && (
+          <p style={{ color: "var(--accent)", marginTop: 14, fontSize: 14 }}>
+            {error}
+          </p>
+        )}
+        {notice && (
+          <p style={{ color: "var(--cyan)", marginTop: 14, fontSize: 14 }}>
+            {notice}
+          </p>
+        )}
+        <button
+          className="btn btn-primary"
+          style={{ width: "100%", marginTop: 24, padding: 13 }}
+          onClick={submit}
+          disabled={busy}
+        >
+          {busy
+            ? "Un instant…"
+            : view === "signup"
+              ? "Créer mon compte"
+              : "Se connecter"}
+        </button>
+        <button
+          className="auth-switch"
+          onClick={() => {
+            setError(null);
+            setNotice(null);
+            setView(view === "signup" ? "login" : "signup");
+          }}
+        >
+          {view === "signup"
+            ? "Déjà un compte ? Se connecter"
+            : "Pas encore de compte ? S'inscrire"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { ready, onboarded, me, notifications } = useApp();
+  const { ready, onboarded, me, notifications, mode } = useApp();
   const unread = notifications.filter((n) => !n.read).length;
 
   const isActive = (href: string) =>
@@ -192,7 +342,9 @@ export default function AppShell({ children }: { children: ReactNode }) {
         </Link>
       </nav>
 
-      {ready && !onboarded && <Onboarding />}
+      {ready &&
+        !onboarded &&
+        (mode === "cloud" ? <AuthModal /> : <Onboarding />)}
     </div>
   );
 }

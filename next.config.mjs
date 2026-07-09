@@ -1,7 +1,12 @@
-// When deploying to GitHub Pages the site is served from /<repo>/,
-// so a basePath is required for assets and links to resolve.
+// Deux modes d'hébergement :
+// - GitHub Pages par défaut : servi depuis /<repo>/, d'où le basePath.
+// - Domaine personnalisé (PAGES_CUSTOM_DOMAIN, ex. tiklive.eu) : l'app est
+//   servie sous /reseau (tiklive.eu/reseau).
 const isGithubPages = process.env.GITHUB_PAGES === "true";
+const customDomain = process.env.PAGES_CUSTOM_DOMAIN;
 const repo = "Tiklive-site-";
+
+const basePath = customDomain ? "/reseau" : isGithubPages ? `/${repo}` : "";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -10,8 +15,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: isGithubPages ? `/${repo}` : "",
-  assetPrefix: isGithubPages ? `/${repo}/` : "",
+  basePath,
+  assetPrefix: basePath ? `${basePath}/` : "",
 };
 
 export default nextConfig;
